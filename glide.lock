@@ -1,0 +1,12 @@
+hash: 233d194675dc843364450b89e38819297d22c84243bd977f26e6826151b9356c
+updated: 2017-01-27T23:47:17.051662219+03:00
+imports:
+- name: github.com/go-gl/gl
+  version: b303bcb3e83b7ef645a5104e1c2db7f8d9e8918a
+  subpackages:
+  - v2.1/gl
+- name: github.com/go-gl/glfw
+  version: eecd6608b5674c04450c6e27b207340a57d27348
+  subpackages:
+  - v3.2/glfw
+testImports: []
