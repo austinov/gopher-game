@@ -6,17 +6,20 @@ import (
 )
 
 type Enemy struct {
-	window     *glfw.Window
-	h, w, x, y float32
+	window  *glfw.Window
+	texture uint32
+	h, w    float32
+	x, y    float32
 }
 
-func newEnemy(window *glfw.Window) *Enemy {
+func NewEnemy(window *glfw.Window) GameElement {
 	return &Enemy{
-		window: window,
-		h:      0.8,
-		w:      0.8,
-		x:      0.0, // TODO
-		y:      0.0, // TODO
+		window:  window,
+		texture: newTexture("assets/enemy.png"),
+		h:       0.8,
+		w:       0.8,
+		x:       0.0, // TODO
+		y:       0.0, // TODO
 	}
 }
 
@@ -32,7 +35,11 @@ func (e *Enemy) Render() {
 			Left:  Coord{-e.w, -e.h},
 			Right: Coord{e.w, e.h},
 		}
-		drawTexture(textureEnemy, rect)
+		drawTexture(e.texture, rect)
 	}
 	gl.PopMatrix()
+}
+
+func (e *Enemy) Unload() {
+	gl.DeleteTextures(1, &e.texture)
 }

@@ -1,25 +1,14 @@
 package main
 
 import (
+	"image"
+	_ "image/png"
+	"log"
+	"os"
 	"runtime"
 
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
-)
-
-type Coord struct {
-	X, Y float32
-}
-
-type Rect struct {
-	Left, Right Coord
-}
-
-var (
-	textureScene  uint32
-	textureGopher uint32
-	textureEnemy  uint32
-	delta         Coord
 )
 
 func init() {
@@ -44,27 +33,36 @@ func main() {
 	}
 
 	window.MakeContextCurrent()
+	// set position on the screen
 	window.SetPos(100, 100)
+	// set icon
+	if err := setIcon(window); err != nil {
+		log.Printf("unable to set window icon: %v\n", err)
+	}
 
 	if err := gl.Init(); err != nil {
 		panic(err)
 	}
 
-	textureScene = newTexture("assets/scene.png")
-	defer gl.DeleteTextures(1, &textureScene)
-
-	textureGopher = newTexture("assets/gopher.png")
-	defer gl.DeleteTextures(1, &textureGopher)
-
-	textureEnemy = newTexture("assets/enemy.png")
-	defer gl.DeleteTextures(1, &textureEnemy)
-
-	s := newScene(window)
+	game := NewGame(window)
 
 	for !window.ShouldClose() {
-		s.Update()
-		s.Render()
+		game.Update()
+		game.Render()
 		window.SwapBuffers()
 		glfw.PollEvents()
 	}
+}
+
+func setIcon(window *glfw.Window) error {
+	imgFile, err := os.Open("assets/gopher.png")
+	if err != nil {
+		return err
+	}
+	img, _, err := image.Decode(imgFile)
+	if err != nil {
+		return err
+	}
+	window.SetIcon([]image.Image{img})
+	return nil
 }

@@ -3,7 +3,6 @@ package main
 import (
 	"image"
 	"image/draw"
-	_ "image/png"
 	"log"
 	"os"
 

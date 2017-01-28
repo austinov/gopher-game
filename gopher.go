@@ -5,27 +5,32 @@ import (
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
+// TODO refactoring
 var b = Rect{
 	Left:  Coord{X: -16, Y: 10},
 	Right: Coord{X: 16, Y: 10},
 }
 
+// TODO refactoring
 var (
 	isLeft, isRight, isTop, isBottom bool
 )
 
 type Gopher struct {
-	window     *glfw.Window
-	h, w, x, y float32
+	window  *glfw.Window
+	texture uint32
+	h, w    float32
+	x, y    float32
 }
 
-func newGopher(window *glfw.Window) *Gopher {
+func NewGopher(window *glfw.Window) GameElement {
 	return &Gopher{
-		window: window,
-		h:      0.8,
-		w:      0.8,
-		x:      0.0, // TODO
-		y:      0.0, // TODO
+		window:  window,
+		texture: newTexture("assets/gopher.png"),
+		h:       0.8,
+		w:       0.8,
+		x:       0.0,   // TODO
+		y:       -2.25, // TODO
 	}
 }
 
@@ -65,10 +70,14 @@ func (g *Gopher) Render() {
 			Left:  Coord{-g.w, -g.h},
 			Right: Coord{g.w, g.h},
 		}
-		drawTexture(textureGopher, rect)
+		drawTexture(g.texture, rect)
 		if isTop {
 			g.y -= 3
 		}
 	}
 	gl.PopMatrix()
+}
+
+func (g *Gopher) Unload() {
+	gl.DeleteTextures(1, &g.texture)
 }

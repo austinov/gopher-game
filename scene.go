@@ -1,21 +1,21 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
-type Scene struct {
-	window *glfw.Window
-	rect   Rect
-	bounds Rect
-	gopher *Gopher
-	enemy  *Enemy
+type scene struct {
+	window  *glfw.Window
+	texture uint32
+	rect    Rect
+	bounds  Rect
+	gopher  *Gopher
+	enemy   *Enemy
+	mmap    []Rect
 }
 
-func newScene(window *glfw.Window) *Scene {
+func NewScene(window *glfw.Window) Scene {
 	// wich part of the window will be used for rendering
 	width, height := window.GetSize()
 	gl.Viewport(0, 0, int32(width), int32(height))
@@ -41,12 +41,6 @@ func newScene(window *glfw.Window) *Scene {
 		screenSize.Y = screenSize.X * screenRatio
 	}
 
-	fmt.Printf("left=%f, right=%f, bottom=%f, top=%f\n",
-		float64(-screenSize.X/2), // left
-		float64(screenSize.X/2),  // right
-		float64(-screenSize.Y/2), // bottom
-		float64(screenSize.Y/2))  // top
-
 	bounds := Rect{
 		Left: Coord{
 			X: -screenSize.X / 2, // left
@@ -57,21 +51,23 @@ func newScene(window *glfw.Window) *Scene {
 			Y: screenSize.Y / 2, // top
 		},
 	}
-	return &Scene{
-		window: window,
-		rect:   sceneRect,
-		bounds: bounds,
-		gopher: newGopher(window),
-		enemy:  newEnemy(window),
+	return &scene{
+		window:  window,
+		texture: newTexture("assets/scene.png"),
+		rect:    sceneRect, // TODO refactoring
+		bounds:  bounds,    // TODO refactoring
+		mmap:    loadMap(),
 	}
 }
 
-func (s *Scene) Update() {
-	s.gopher.Update()
-	s.enemy.Update()
+func (s *scene) Boundaries() []Rect {
+	return s.mmap
 }
 
-func (s *Scene) Render() {
+func (s *scene) Update() {
+}
+
+func (s *scene) Render() {
 	// specify clear values for the color buffers (r,g,b,a)
 	gl.ClearColor(0, 0, 0, 1)
 	// clear buffers to preset values
@@ -102,9 +98,52 @@ func (s *Scene) Render() {
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 	gl.Enable(gl.ALPHA_TEST)
 
-	// render game's parts
-	drawTexture(textureScene, s.rect)
+	drawTexture(s.texture, s.rect)
+}
 
-	s.gopher.Render()
-	s.enemy.Render()
+func (s *scene) Unload() {
+	gl.DeleteTextures(1, &s.texture)
+}
+
+func loadMap() []Rect {
+	bounds := make([]Rect, 0)
+	// walls
+	bounds = append(bounds, Rect{
+		Left:  Coord{-16, 10},
+		Right: Coord{-16, -10},
+	})
+	bounds = append(bounds, Rect{
+		Left:  Coord{-16, 10},
+		Right: Coord{16, 10},
+	})
+	bounds = append(bounds, Rect{
+		Left:  Coord{16, 10},
+		Right: Coord{16, -10},
+	})
+	// platforms
+	bounds = append(bounds, Rect{
+		Left:  Coord{-16, -4},
+		Right: Coord{-13, -4},
+	})
+	bounds = append(bounds, Rect{
+		Left:  Coord{13, -4},
+		Right: Coord{16, -4},
+	})
+	bounds = append(bounds, Rect{
+		Left:  Coord{-14, -1.5},
+		Right: Coord{14, -1.5},
+	})
+	bounds = append(bounds, Rect{
+		Left:  Coord{-16, 1},
+		Right: Coord{-13, 1},
+	})
+	bounds = append(bounds, Rect{
+		Left:  Coord{13, 1},
+		Right: Coord{16, 1},
+	})
+	bounds = append(bounds, Rect{
+		Left:  Coord{-14, 3.5},
+		Right: Coord{14, 3.5},
+	})
+	return bounds
 }
