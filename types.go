@@ -1,5 +1,9 @@
 package main
 
+type Plan interface {
+	Boundaries() []Rect
+}
+
 type GameElement interface {
 	Update()
 	Render()
@@ -7,8 +11,8 @@ type GameElement interface {
 }
 
 type Scene interface {
-	Boundaries() []Rect
 	GameElement
+	Plan
 }
 
 type Coord struct {

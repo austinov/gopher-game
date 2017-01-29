@@ -10,10 +10,11 @@ type Game struct {
 }
 
 func NewGame(window *glfw.Window) *Game {
+	scene := NewScene(window)
 	return &Game{
-		scene:  NewScene(window),
-		gopher: NewGopher(window),
-		enemy:  NewEnemy(window),
+		scene:  scene,
+		gopher: NewGopher(window, scene),
+		enemy:  NewEnemy(window, scene),
 	}
 }
 

@@ -55,7 +55,7 @@ func main() {
 }
 
 func setIcon(window *glfw.Window) error {
-	imgFile, err := os.Open("assets/gopher.png")
+	imgFile, err := os.Open("assets/icon.png")
 	if err != nil {
 		return err
 	}

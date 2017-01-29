@@ -8,14 +8,16 @@ import (
 type Enemy struct {
 	window  *glfw.Window
 	texture uint32
+	plan    Plan
 	h, w    float32
 	x, y    float32
 }
 
-func NewEnemy(window *glfw.Window) GameElement {
+func NewEnemy(window *glfw.Window, plan Plan) GameElement {
 	return &Enemy{
 		window:  window,
-		texture: newTexture("assets/enemy.png"),
+		texture: NewTexture("assets/enemy.png"),
+		plan:    plan,
 		h:       0.8,
 		w:       0.8,
 		x:       0.0, // TODO
@@ -35,7 +37,7 @@ func (e *Enemy) Render() {
 			Left:  Coord{-e.w, -e.h},
 			Right: Coord{e.w, e.h},
 		}
-		drawTexture(e.texture, rect)
+		DrawTexture(e.texture, rect)
 	}
 	gl.PopMatrix()
 }

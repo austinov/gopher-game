@@ -12,7 +12,7 @@ type scene struct {
 	bounds  Rect
 	gopher  *Gopher
 	enemy   *Enemy
-	mmap    []Rect
+	plan    []Rect
 }
 
 func NewScene(window *glfw.Window) Scene {
@@ -53,15 +53,15 @@ func NewScene(window *glfw.Window) Scene {
 	}
 	return &scene{
 		window:  window,
-		texture: newTexture("assets/scene.png"),
+		texture: NewTexture("assets/scene.png"),
 		rect:    sceneRect, // TODO refactoring
 		bounds:  bounds,    // TODO refactoring
-		mmap:    loadMap(),
+		plan:    loadMap(),
 	}
 }
 
 func (s *scene) Boundaries() []Rect {
-	return s.mmap
+	return s.plan
 }
 
 func (s *scene) Update() {
@@ -98,7 +98,7 @@ func (s *scene) Render() {
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 	gl.Enable(gl.ALPHA_TEST)
 
-	drawTexture(s.texture, s.rect)
+	DrawTexture(s.texture, s.rect)
 }
 
 func (s *scene) Unload() {
@@ -108,42 +108,56 @@ func (s *scene) Unload() {
 func loadMap() []Rect {
 	bounds := make([]Rect, 0)
 	// walls
+	// left
 	bounds = append(bounds, Rect{
 		Left:  Coord{-16, 10},
-		Right: Coord{-16, -10},
+		Right: Coord{-15.6, -10},
 	})
+	// top
 	bounds = append(bounds, Rect{
 		Left:  Coord{-16, 10},
-		Right: Coord{16, 10},
+		Right: Coord{16, 9.6},
 	})
+	// right
 	bounds = append(bounds, Rect{
-		Left:  Coord{16, 10},
+		Left:  Coord{15.6, 10},
 		Right: Coord{16, -10},
 	})
+	/* bottom
+	bounds = append(bounds, Rect{
+		Left:  Coord{-16, -10},
+		Right: Coord{16, -10},
+	}) */
 	// platforms
+	// left first from bottom
 	bounds = append(bounds, Rect{
-		Left:  Coord{-16, -4},
-		Right: Coord{-13, -4},
+		Left:  Coord{-16, -8},
+		Right: Coord{-10, -8.4},
 	})
+	// right first bottom
 	bounds = append(bounds, Rect{
-		Left:  Coord{13, -4},
-		Right: Coord{16, -4},
+		Left:  Coord{10, -8},
+		Right: Coord{16, -8.4},
 	})
+	// middle second bottom
 	bounds = append(bounds, Rect{
-		Left:  Coord{-14, -1.5},
-		Right: Coord{14, -1.5},
+		Left:  Coord{-12, -3},
+		Right: Coord{12, -3.4},
 	})
+	// left middle
 	bounds = append(bounds, Rect{
-		Left:  Coord{-16, 1},
-		Right: Coord{-13, 1},
+		Left:  Coord{-16, 2},
+		Right: Coord{-10, 1.6},
 	})
+	// right middle
 	bounds = append(bounds, Rect{
-		Left:  Coord{13, 1},
-		Right: Coord{16, 1},
+		Left:  Coord{10, 2},
+		Right: Coord{16, 1.6},
 	})
+	// top middle
 	bounds = append(bounds, Rect{
-		Left:  Coord{-14, 3.5},
-		Right: Coord{14, 3.5},
+		Left:  Coord{-12, 7},
+		Right: Coord{12, 6.6},
 	})
 	return bounds
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/go-gl/gl/v2.1/gl"
 )
 
-func newTexture(file string) uint32 {
+func NewTexture(file string) uint32 {
 	imgFile, err := os.Open(file)
 	if err != nil {
 		log.Fatalf("texture %q not found on disk: %v\n", file, err)
@@ -61,7 +61,7 @@ func newTexture(file string) uint32 {
 	return texture
 }
 
-func drawTexture(texture uint32, dst Rect) {
+func DrawTexture(texture uint32, dst Rect) {
 	gl.ActiveTexture(gl.TEXTURE0)
 	gl.Enable(gl.TEXTURE_2D)
 	gl.BindTexture(gl.TEXTURE_2D, texture)
