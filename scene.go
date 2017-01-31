@@ -107,27 +107,6 @@ func (s *scene) Unload() {
 
 func loadMap() []Rect {
 	bounds := make([]Rect, 0)
-	// walls
-	// left
-	bounds = append(bounds, Rect{
-		Left:  Coord{-16, 10},
-		Right: Coord{-15.6, -10},
-	})
-	// top
-	bounds = append(bounds, Rect{
-		Left:  Coord{-16, 10},
-		Right: Coord{16, 9.6},
-	})
-	// right
-	bounds = append(bounds, Rect{
-		Left:  Coord{15.6, 10},
-		Right: Coord{16, -10},
-	})
-	/* bottom
-	bounds = append(bounds, Rect{
-		Left:  Coord{-16, -10},
-		Right: Coord{16, -10},
-	}) */
 	// platforms
 	// left first from bottom
 	bounds = append(bounds, Rect{
@@ -158,6 +137,22 @@ func loadMap() []Rect {
 	bounds = append(bounds, Rect{
 		Left:  Coord{-12, 7},
 		Right: Coord{12, 6.6},
+	})
+	// walls
+	// left
+	bounds = append(bounds, Rect{
+		Left:  Coord{-16, 10},
+		Right: Coord{-15.6, -10},
+	})
+	// top
+	bounds = append(bounds, Rect{
+		Left:  Coord{-16, 10},
+		Right: Coord{16, 9.6},
+	})
+	// right
+	bounds = append(bounds, Rect{
+		Left:  Coord{15.6, 10},
+		Right: Coord{16, -10},
 	})
 	return bounds
 }

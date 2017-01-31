@@ -6,3 +6,5 @@ import:
 - package: github.com/go-gl/glfw
   subpackages:
   - v3.2/glfw
+- package: github.com/paulmach/go.geo
+  version: ^0.1.0
