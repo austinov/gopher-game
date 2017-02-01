@@ -7,8 +7,10 @@ import (
 	"os"
 
 	"github.com/go-gl/gl/v2.1/gl"
+	"github.com/paulmach/go.geo"
 )
 
+// NewTexture loads texture from file.
 func NewTexture(file string) uint32 {
 	imgFile, err := os.Open(file)
 	if err != nil {
@@ -61,6 +63,7 @@ func NewTexture(file string) uint32 {
 	return texture
 }
 
+// DrawTexture draws texture into rectange.
 func DrawTexture(texture uint32, dst Rect) {
 	gl.ActiveTexture(gl.TEXTURE0)
 	gl.Enable(gl.TEXTURE_2D)
@@ -83,4 +86,31 @@ func DrawTexture(texture uint32, dst Rect) {
 
 	gl.End()
 	gl.Disable(gl.TEXTURE_2D)
+}
+
+// CheckBoundaries checks violation of boundaries.
+func CheckBoundaries(rect Rect, boundaries []Rect) (violated bool, violatedBound Rect) {
+	for _, bound := range boundaries {
+		p1 := geo.NewPath()
+		pp := []geo.Point{
+			geo.Point{float64(rect.Left.X), float64(rect.Left.Y)}, geo.Point{float64(rect.Right.X), float64(rect.Left.Y)}, // top
+			geo.Point{float64(rect.Right.X), float64(rect.Left.Y)}, geo.Point{float64(rect.Right.X), float64(rect.Right.Y)}, // right
+			geo.Point{float64(rect.Right.X), float64(rect.Right.Y)}, geo.Point{float64(rect.Left.X), float64(rect.Right.Y)}, // bottom
+			geo.Point{float64(rect.Left.X), float64(rect.Right.Y)}, geo.Point{float64(rect.Left.X), float64(rect.Left.Y)}, // left
+		}
+		p1.SetPoints(pp)
+		p2 := geo.NewPath()
+		pp = []geo.Point{
+			geo.Point{float64(bound.Left.X), float64(bound.Left.Y)}, geo.Point{float64(bound.Right.X), float64(bound.Left.Y)}, // top
+			geo.Point{float64(bound.Right.X), float64(bound.Left.Y)}, geo.Point{float64(bound.Right.X), float64(bound.Right.Y)}, // right
+			geo.Point{float64(bound.Right.X), float64(bound.Right.Y)}, geo.Point{float64(bound.Left.X), float64(bound.Right.Y)}, // bottom
+			geo.Point{float64(bound.Left.X), float64(bound.Right.Y)}, geo.Point{float64(bound.Left.X), float64(bound.Left.Y)}, // left
+		}
+		p2.SetPoints(pp)
+
+		if p1.Intersects(p2) {
+			return true, bound
+		}
+	}
+	return false, Rect{}
 }
