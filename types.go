@@ -1,24 +1,32 @@
 package main
 
+import (
+	"github.com/go-gl/glfw/v3.2/glfw"
+)
+
 type Plan interface {
 	Boundaries() []Rect
 }
 
-type GameElement interface {
-	Update()
+type Player interface {
+	Update(window *glfw.Window, plan Plan)
+	Coords() Rect
 	Render()
 	Unload()
 }
 
 type Scene interface {
-	GameElement
+	Update()
+	Render()
+	Unload()
 	Plan
 }
 
-type Coord struct {
+type Point struct {
 	X, Y float32
 }
 
 type Rect struct {
-	Left, Right Coord
+	Left  Point
+	Right Point
 }

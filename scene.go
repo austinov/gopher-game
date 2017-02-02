@@ -6,12 +6,9 @@ import (
 )
 
 type scene struct {
-	window  *glfw.Window
 	texture uint32
 	rect    Rect
 	bounds  Rect
-	gopher  *Gopher
-	enemy   *Enemy
 	plan    []Rect
 }
 
@@ -22,15 +19,15 @@ func NewScene(window *glfw.Window) Scene {
 
 	screenRatio := float32(height) / float32(width)
 	sceneRect := Rect{
-		Left:  Coord{-16, -10},
-		Right: Coord{16, 10},
+		Left:  Point{-16, -10},
+		Right: Point{16, 10},
 	}
-	sceneSize := Coord{
+	sceneSize := Point{
 		X: sceneRect.Right.X - sceneRect.Left.X,
 		Y: sceneRect.Right.Y - sceneRect.Left.Y,
 	}
 
-	var screenSize Coord
+	var screenSize Point
 	sceneRatio := sceneSize.Y / sceneSize.X
 
 	if screenRatio < sceneRatio {
@@ -42,17 +39,16 @@ func NewScene(window *glfw.Window) Scene {
 	}
 
 	bounds := Rect{
-		Left: Coord{
+		Left: Point{
 			X: -screenSize.X / 2, // left
 			Y: -screenSize.Y / 2, // right
 		},
-		Right: Coord{
+		Right: Point{
 			X: screenSize.X / 2, // bottom
 			Y: screenSize.Y / 2, // top
 		},
 	}
 	return &scene{
-		window:  window,
 		texture: NewTexture("assets/scene.png"),
 		rect:    sceneRect, // TODO refactoring
 		bounds:  bounds,    // TODO refactoring
@@ -71,15 +67,15 @@ func (s *scene) Render() {
 	// specify clear values for the color buffers (r,g,b,a)
 	gl.ClearColor(0, 0, 0, 1)
 	// clear buffers to preset values
-	// COLOR_BUFFER_BIT indicates the buffers currently enabled for color writing
+	// COLOR_BUFFER_BIT indicates the buffers coordsently enabled for color writing
 	gl.Clear(gl.COLOR_BUFFER_BIT)
-	// specify which matrix is the current matrix
+	// specify which matrix is the coordsent matrix
 	// GL_MODELVIEW applies subsequent matrix operations to the modelview matrix stack
 	gl.MatrixMode(gl.MODELVIEW)
-	// replace the current matrix with the identity matrix
+	// replace the coordsent matrix with the identity matrix
 	gl.LoadIdentity()
 
-	// multiply the current matrix with an orthographic matrix
+	// multiply the coordsent matrix with an orthographic matrix
 	gl.Ortho(
 		float64(s.bounds.Left.X),  // left
 		float64(s.bounds.Right.X), // right
@@ -110,49 +106,49 @@ func loadMap() []Rect {
 	// platforms
 	// left first from bottom
 	bounds = append(bounds, Rect{
-		Left:  Coord{-16, -8},
-		Right: Coord{-10, -8.4},
+		Left:  Point{-16, -8},
+		Right: Point{-10, -8.4},
 	})
 	// right first bottom
 	bounds = append(bounds, Rect{
-		Left:  Coord{10, -8},
-		Right: Coord{16, -8.4},
+		Left:  Point{10, -8},
+		Right: Point{16, -8.4},
 	})
 	// middle second bottom
 	bounds = append(bounds, Rect{
-		Left:  Coord{-12, -3},
-		Right: Coord{12, -3.4},
+		Left:  Point{-12, -3},
+		Right: Point{12, -3.4},
 	})
 	// left middle
 	bounds = append(bounds, Rect{
-		Left:  Coord{-16, 2},
-		Right: Coord{-10, 1.6},
+		Left:  Point{-16, 2},
+		Right: Point{-10, 1.6},
 	})
 	// right middle
 	bounds = append(bounds, Rect{
-		Left:  Coord{10, 2},
-		Right: Coord{16, 1.6},
+		Left:  Point{10, 2},
+		Right: Point{16, 1.6},
 	})
 	// top middle
 	bounds = append(bounds, Rect{
-		Left:  Coord{-12, 7},
-		Right: Coord{12, 6.6},
+		Left:  Point{-12, 7},
+		Right: Point{12, 6.6},
 	})
 	// walls
 	// left
 	bounds = append(bounds, Rect{
-		Left:  Coord{-16, 10},
-		Right: Coord{-15.6, -10},
+		Left:  Point{-16, 10},
+		Right: Point{-15.6, -10},
 	})
 	// top
 	bounds = append(bounds, Rect{
-		Left:  Coord{-16, 10},
-		Right: Coord{16, 9.6},
+		Left:  Point{-16, 10},
+		Right: Point{16, 9.6},
 	})
 	// right
 	bounds = append(bounds, Rect{
-		Left:  Coord{15.6, 10},
-		Right: Coord{16, -10},
+		Left:  Point{15.6, 10},
+		Right: Point{16, -10},
 	})
 	return bounds
 }
