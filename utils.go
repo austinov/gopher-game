@@ -89,7 +89,7 @@ func DrawTexture(texture uint32, dst Rect) {
 }
 
 // CheckBoundaries checks violation of boundaries.
-func CheckBoundaries(rect Rect, boundaries []Rect) (violated bool, violatedBound Rect) {
+func CheckBoundaries(rect Rect, boundaries ...Rect) (violated bool, violatedBound Rect) {
 	for _, bound := range boundaries {
 		p1 := geo.NewPath()
 		pp := []geo.Point{

@@ -15,22 +15,23 @@ type Enemy struct {
 	floor   Rect
 }
 
-func NewEnemy() Player {
+func NewEnemy(r2l bool) Player {
 	h, w := float32(0.8), float32(0.8)
 	return &Enemy{
 		texture: NewTexture("assets/enemy.png"),
-		height:  h,
-		width:   w,
 		coords: Rect{
 			Left:  Point{-w, 8},
 			Right: Point{w, 8 - h},
 		},
+		height: h,
+		width:  w,
+		r2l:    r2l,
 	}
 }
 
 func (e *Enemy) Update(window *glfw.Window, plan Plan) {
 	checkBoundaries := func() (bool, Rect) {
-		return CheckBoundaries(e.coords, plan.Boundaries())
+		return CheckBoundaries(e.coords, plan.GetBoundaries()...)
 	}
 	if e.onFloor {
 		if (e.coords.Left.X < e.floor.Left.X && e.coords.Right.X < e.floor.Left.X) ||
@@ -73,7 +74,7 @@ func (e *Enemy) Update(window *glfw.Window, plan Plan) {
 	}
 }
 
-func (e *Enemy) Coords() Rect {
+func (e *Enemy) GetCoords() Rect {
 	return e.coords
 }
 

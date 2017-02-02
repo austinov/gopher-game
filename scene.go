@@ -10,6 +10,7 @@ type scene struct {
 	rect    Rect
 	bounds  Rect
 	plan    []Rect
+	hole    Rect
 }
 
 func NewScene(window *glfw.Window) Scene {
@@ -52,11 +53,16 @@ func NewScene(window *glfw.Window) Scene {
 		texture: NewTexture("assets/scene.png"),
 		rect:    sceneRect, // TODO refactoring
 		bounds:  bounds,    // TODO refactoring
-		plan:    loadMap(),
+		plan:    buildPlan(),
+		hole:    buildHole(),
 	}
 }
 
-func (s *scene) Boundaries() []Rect {
+func (s *scene) GetHole() Rect {
+	return s.hole
+}
+
+func (s *scene) GetBoundaries() []Rect {
 	return s.plan
 }
 
@@ -101,7 +107,7 @@ func (s *scene) Unload() {
 	gl.DeleteTextures(1, &s.texture)
 }
 
-func loadMap() []Rect {
+func buildPlan() []Rect {
 	bounds := make([]Rect, 0)
 	// platforms
 	// left first from bottom
@@ -151,4 +157,11 @@ func loadMap() []Rect {
 		Right: Point{16, -10},
 	})
 	return bounds
+}
+
+func buildHole() Rect {
+	return Rect{
+		Left:  Point{-15.6, 10},
+		Right: Point{15.6, -10},
+	}
 }

@@ -37,7 +37,7 @@ func (g *Gopher) Update(window *glfw.Window, plan Plan) {
 	isTop := isButtonPress(glfw.KeyUp)
 
 	checkBoundaries := func() (bool, Rect) {
-		return CheckBoundaries(g.coords, plan.Boundaries())
+		return CheckBoundaries(g.coords, plan.GetBoundaries()...)
 	}
 	if isLeft {
 		g.coords.Left.X -= 0.1
@@ -81,7 +81,7 @@ func (g *Gopher) Update(window *glfw.Window, plan Plan) {
 	}
 }
 
-func (g *Gopher) Coords() Rect {
+func (g *Gopher) GetCoords() Rect {
 	return g.coords
 }
 

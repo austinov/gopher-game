@@ -5,12 +5,13 @@ import (
 )
 
 type Plan interface {
-	Boundaries() []Rect
+	GetHole() Rect
+	GetBoundaries() []Rect
 }
 
 type Player interface {
 	Update(window *glfw.Window, plan Plan)
-	Coords() Rect
+	GetCoords() Rect
 	Render()
 	Unload()
 }
