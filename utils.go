@@ -11,7 +11,7 @@ import (
 )
 
 // NewTexture loads texture from file.
-func NewTexture(file string) uint32 {
+func NewTexture(file string) (texture uint32, bounds Rect) {
 	imgFile, err := os.Open(file)
 	if err != nil {
 		log.Fatalf("texture %q not found on disk: %v\n", file, err)
@@ -27,7 +27,7 @@ func NewTexture(file string) uint32 {
 	}
 	draw.Draw(rgba, rgba.Bounds(), img, image.Point{0, 0}, draw.Src)
 
-	var texture uint32
+	//var texture uint32
 
 	// enable server-side GL capabilities
 	gl.Enable(gl.TEXTURE_2D)
@@ -60,7 +60,13 @@ func NewTexture(file string) uint32 {
 	// disable server-side GL capabilities
 	gl.Disable(gl.TEXTURE_2D)
 
-	return texture
+	imgWidth := float32(img.Bounds().Max.X) / 100.0
+	imgHeight := float32(img.Bounds().Max.Y) / 100.0
+	bounds = Rect{
+		Left:  Point{X: float32(0), Y: float32(0)},
+		Right: Point{X: imgWidth, Y: imgHeight},
+	}
+	return texture, bounds
 }
 
 // DrawTexture draws texture into rectange.

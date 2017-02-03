@@ -16,9 +16,10 @@ type Enemy struct {
 }
 
 func NewEnemy(r2l bool) Player {
-	h, w := float32(0.8), float32(0.8)
+	texture, bounds := NewTexture("assets/enemy.png")
+	h, w := bounds.Right.Y, bounds.Right.X
 	return &Enemy{
-		texture: NewTexture("assets/enemy.png"),
+		texture: texture,
 		coords: Rect{
 			Left:  Point{-w, 8},
 			Right: Point{w, 8 - h},

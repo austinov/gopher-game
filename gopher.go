@@ -10,15 +10,16 @@ type Gopher struct {
 	coords  Rect
 	height  float32
 	width   float32
-	r2l     bool
+	r2l     bool // moving direction: true when right to left, false when left to right
 	onFloor bool
 	floor   Rect
 }
 
 func NewGopher(window *glfw.Window, plan Plan) Player {
-	h, w := float32(0.8), float32(0.8)
+	texture, bounds := NewTexture("assets/gopher.png")
+	h, w := bounds.Right.Y, bounds.Right.X
 	return &Gopher{
-		texture: NewTexture("assets/gopher.png"),
+		texture: texture,
 		height:  h,
 		width:   w,
 		coords: Rect{

@@ -7,7 +7,7 @@ import (
 
 type scene struct {
 	texture uint32
-	rect    Rect
+	area    Rect
 	bounds  Rect
 	plan    []Rect
 	hole    Rect
@@ -19,13 +19,14 @@ func NewScene(window *glfw.Window) Scene {
 	gl.Viewport(0, 0, int32(width), int32(height))
 
 	screenRatio := float32(height) / float32(width)
-	sceneRect := Rect{
-		Left:  Point{-16, -10},
-		Right: Point{16, 10},
+	texture, imgBounds := NewTexture("assets/scene.png")
+	sceneArea := Rect{
+		Left:  Point{-imgBounds.Right.X, -imgBounds.Right.Y},
+		Right: Point{imgBounds.Right.X, imgBounds.Right.Y},
 	}
 	sceneSize := Point{
-		X: sceneRect.Right.X - sceneRect.Left.X,
-		Y: sceneRect.Right.Y - sceneRect.Left.Y,
+		X: sceneArea.Right.X - sceneArea.Left.X,
+		Y: sceneArea.Right.Y - sceneArea.Left.Y,
 	}
 
 	var screenSize Point
@@ -41,29 +42,28 @@ func NewScene(window *glfw.Window) Scene {
 
 	bounds := Rect{
 		Left: Point{
-			X: -screenSize.X / 2, // left
-			Y: -screenSize.Y / 2, // right
+			X: -screenSize.X / 2,
+			Y: -screenSize.Y / 2,
 		},
 		Right: Point{
-			X: screenSize.X / 2, // bottom
-			Y: screenSize.Y / 2, // top
+			X: screenSize.X / 2,
+			Y: screenSize.Y / 2,
 		},
 	}
 	return &scene{
-		texture: NewTexture("assets/scene.png"),
-		rect:    sceneRect, // TODO refactoring
-		bounds:  bounds,    // TODO refactoring
+		texture: texture, //NewTexture("assets/scene.png"),
+		area:    sceneArea,
+		bounds:  bounds,
 		plan:    buildPlan(),
-		hole:    buildHole(),
 	}
 }
 
 func (s *scene) GetHole() Rect {
-	return s.hole
+	return s.plan[len(s.plan)-1]
 }
 
 func (s *scene) GetBoundaries() []Rect {
-	return s.plan
+	return s.plan[:len(s.plan)-1]
 }
 
 func (s *scene) Update() {
@@ -100,7 +100,7 @@ func (s *scene) Render() {
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 	gl.Enable(gl.ALPHA_TEST)
 
-	DrawTexture(s.texture, s.rect)
+	DrawTexture(s.texture, s.area)
 }
 
 func (s *scene) Unload() {
@@ -156,12 +156,10 @@ func buildPlan() []Rect {
 		Left:  Point{15.6, 10},
 		Right: Point{16, -10},
 	})
-	return bounds
-}
-
-func buildHole() Rect {
-	return Rect{
+	// bottom hole
+	bounds = append(bounds, Rect{
 		Left:  Point{-15.6, 10},
 		Right: Point{15.6, -10},
-	}
+	})
+	return bounds
 }
