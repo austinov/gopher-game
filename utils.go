@@ -4,6 +4,7 @@ import (
 	"image"
 	"image/draw"
 	"log"
+	"math"
 	"os"
 
 	"github.com/go-gl/gl/v2.1/gl"
@@ -60,6 +61,7 @@ func NewTexture(file string) (texture uint32, bounds Rect) {
 	// disable server-side GL capabilities
 	gl.Disable(gl.TEXTURE_2D)
 
+	// translate image size into game units
 	imgWidth := float32(img.Bounds().Max.X) / 100.0
 	imgHeight := float32(img.Bounds().Max.Y) / 100.0
 	bounds = Rect{
@@ -119,4 +121,15 @@ func CheckBoundaries(rect Rect, boundaries ...Rect) (violated bool, violatedBoun
 		}
 	}
 	return false, Rect{}
+}
+
+// CountOfDigits returns count of digits in number
+func CountOfDigits(number int64) int {
+	if number == 0 {
+		return 1
+	}
+	if number < 0 {
+		number = -number
+	}
+	return int(math.Ceil(math.Log10(math.Abs(float64(number)) + 0.5)))
 }

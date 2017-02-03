@@ -51,11 +51,15 @@ func NewScene(window *glfw.Window) Scene {
 		},
 	}
 	return &scene{
-		texture: texture, //NewTexture("assets/scene.png"),
+		texture: texture,
 		area:    sceneArea,
 		bounds:  bounds,
 		plan:    buildPlan(),
 	}
+}
+
+func (s *scene) GetArea() Rect {
+	return s.area
 }
 
 func (s *scene) GetHole() Rect {

@@ -5,6 +5,7 @@ import (
 )
 
 type Plan interface {
+	GetArea() Rect
 	GetHole() Rect
 	GetBoundaries() []Rect
 }

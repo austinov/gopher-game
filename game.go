@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 
@@ -13,7 +12,8 @@ type Game struct {
 	scene   Scene
 	gopher  Player
 	enemies []Player
-	score   uint32
+	board   *Scoreboard
+	score   int32
 	lives   int
 }
 
@@ -25,53 +25,53 @@ func NewGame(window *glfw.Window) *Game {
 		scene:   scene,
 		gopher:  NewGopher(window, scene),
 		enemies: make([]Player, 0),
+		board:   NewScoreBoard(scene.GetArea()),
 		lives:   3,
 	}
 }
 
 func (g *Game) Update() {
 	g.scene.Update()
-	g.showScore()
+	g.checkLives()
 	if g.lives <= 0 {
 		return
 	}
-	g.calcLives()
 	g.gopher.Update(g.window, g.scene)
 	g.updateEnemies()
 }
 
-func (g *Game) calcLives() {
+func (g *Game) checkLives() {
 	if g.lives <= 0 {
 		return
 	}
 	if v, _ := CheckBoundaries(g.gopher.GetCoords(), g.scene.GetHole()); v {
+		// gopher crossed the hole, delete it and create new one
 		g.lives--
-		g.gopher.Unload()
 		if g.lives <= 0 {
 			return
 		}
+		g.gopher.Unload()
 		g.gopher = NewGopher(g.window, g.scene)
 	}
+	caught := false
 	for _, enemy := range g.enemies {
+		// gopher was caught by enemy, delete it and create new one
 		if v, _ := CheckBoundaries(g.gopher.GetCoords(), enemy.GetCoords()); v {
-			g.lives--
-			g.gopher.Unload()
-			if g.lives <= 0 {
-				return
-			}
-			g.gopher = NewGopher(g.window, g.scene)
+			caught = true
+			break
 		}
 	}
-}
-
-func (g *Game) showScore() {
-	// TODO
-	for i := 0; i < g.lives; i++ {
-		//star.Render()
-	}
-	// score.Render()
-	if g.lives <= 0 {
-		fmt.Printf("*** GAME OVER ***\n")
+	if caught {
+		for _, enemy := range g.enemies {
+			enemy.Unload()
+		}
+		g.enemies = make([]Player, 0)
+		g.lives--
+		if g.lives <= 0 {
+			return
+		}
+		g.gopher.Unload()
+		g.gopher = NewGopher(g.window, g.scene)
 	}
 }
 
@@ -98,6 +98,7 @@ func (g *Game) updateEnemies() {
 func (g *Game) Render() {
 	g.scene.Render()
 	g.gopher.Render()
+	g.board.Show(g.score, g.lives)
 	for _, enemy := range g.enemies {
 		enemy.Render()
 	}
@@ -109,4 +110,5 @@ func (g *Game) Unload() {
 	for _, enemy := range g.enemies {
 		enemy.Unload()
 	}
+	g.board.Unload()
 }
