@@ -6,7 +6,7 @@ import (
 
 type Plan interface {
 	GetArea() Rect
-	GetHole() Rect
+	GetBlackHole() Rect
 	GetBoundaries() []Rect
 }
 

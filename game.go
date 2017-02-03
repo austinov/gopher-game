@@ -7,6 +7,10 @@ import (
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
+const (
+	enemyPoints = 2
+)
+
 type Game struct {
 	window  *glfw.Window
 	scene   Scene
@@ -44,7 +48,7 @@ func (g *Game) checkLives() {
 	if g.lives <= 0 {
 		return
 	}
-	if v, _ := CheckBoundaries(g.gopher.GetCoords(), g.scene.GetHole()); v {
+	if v, _ := CheckBoundaries(g.gopher.GetCoords(), g.scene.GetBlackHole()); v {
 		// gopher crossed the hole, delete it and create new one
 		g.lives--
 		if g.lives <= 0 {
@@ -76,15 +80,16 @@ func (g *Game) checkLives() {
 }
 
 func (g *Game) updateEnemies() {
-	// TODO
+	// TODO intelligence
 	deleted := 0
 	for i := range g.enemies {
 		j := i - deleted
-		if v, _ := CheckBoundaries(g.enemies[j].GetCoords(), g.scene.GetHole()); v {
+		if v, _ := CheckBoundaries(g.enemies[j].GetCoords(), g.scene.GetBlackHole()); v {
 			// enemy crossed the hole, delete it and create new one
 			g.enemies[j].Unload()
 			g.enemies = append(g.enemies[:j], g.enemies[j+1:]...)
 			deleted++
+			g.score += enemyPoints
 		}
 	}
 	if len(g.enemies) == 0 {

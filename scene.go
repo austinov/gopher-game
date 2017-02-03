@@ -62,7 +62,7 @@ func (s *scene) GetArea() Rect {
 	return s.area
 }
 
-func (s *scene) GetHole() Rect {
+func (s *scene) GetBlackHole() Rect {
 	return s.plan[len(s.plan)-1]
 }
 
