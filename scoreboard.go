@@ -19,7 +19,7 @@ type Scoreboard struct {
 	gw     float32 // width of gover image
 }
 
-func NewScoreBoard(area Rect) *Scoreboard {
+func NewScoreBoard(area Rect) Board {
 	life, bounds := NewTexture("assets/life.png")
 	lh, lw := bounds.Right.Y, bounds.Right.X
 
@@ -48,7 +48,7 @@ func NewScoreBoard(area Rect) *Scoreboard {
 	}
 }
 
-func (s *Scoreboard) Show(score int32, lives int) {
+func (s *Scoreboard) Show(score, lives int) {
 	const space = 0.3
 	rect := Rect{
 		Left:  Point{s.lw, s.lh},

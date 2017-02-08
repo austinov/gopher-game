@@ -24,6 +24,17 @@ type Scene interface {
 	Plan
 }
 
+type Gift interface {
+	GetCoords() Rect
+	Render()
+	Unload()
+}
+
+type Board interface {
+	Show(score, lives int)
+	Unload()
+}
+
 type Point struct {
 	X, Y float32
 }
