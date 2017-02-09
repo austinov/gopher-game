@@ -9,14 +9,13 @@ import (
 type Scoreboard struct {
 	life   uint32
 	digits []uint32
+	keys   uint32
 	gover  uint32
 	area   Rect
-	lh     float32 // height of life image
-	lw     float32 // width of life image
-	dh     float32 // height of digit image
-	dw     float32 // width of digit image
-	gh     float32 // height of gover image
-	gw     float32 // width of gover image
+	lh, lw float32 // height, width of life image
+	dh, dw float32 // height, width of digit image
+	kh, kw float32 // height, width of keys image
+	gh, gw float32 // height, width of gover image
 }
 
 func NewScoreBoard(area Rect) Board {
@@ -31,18 +30,24 @@ func NewScoreBoard(area Rect) Board {
 		dh, dw = bounds.Right.Y, bounds.Right.X
 	}
 
+	keys, bounds := NewTexture("assets/keys.png")
+	kh, kw := bounds.Right.Y, bounds.Right.X
+
 	gover, bounds := NewTexture("assets/gameover.png")
 	gh, gw := bounds.Right.Y, bounds.Right.X
 
 	return &Scoreboard{
 		life:   life,
 		digits: digits,
+		keys:   keys,
 		gover:  gover,
 		area:   area,
 		lh:     lh,
 		lw:     lw,
 		dh:     dh,
 		dw:     dw,
+		kh:     kh,
+		kw:     kw,
 		gh:     gh,
 		gw:     gw,
 	}
@@ -70,15 +75,25 @@ func (s *Scoreboard) Show(score, lives int) {
 	for i, digit := range digits {
 		gl.PushMatrix()
 		{
-			gl.Translatef(s.area.Right.Y/2+(float32(i)*(s.dw+space)), -s.area.Left.Y-s.dh+space, 0)
+			gl.Translatef(s.area.Right.X/2+(float32(i)*(s.dw+space)), -s.area.Left.Y-s.dh+space, 0)
 			DrawTexture(s.digits[digit], rect)
 		}
 		gl.PopMatrix()
 	}
+	rect = Rect{
+		Left:  Point{-s.kw, -s.kh},
+		Right: Point{s.kw, s.kh},
+	}
+	gl.PushMatrix()
+	{
+		gl.Translatef(0, s.area.Right.Y+s.kh*1.5, 0)
+		DrawTexture(s.keys, rect)
+	}
+	gl.PopMatrix()
 	if lives <= 0 {
 		rect = Rect{
 			Left:  Point{-s.gw, -s.gh},
-			Right: Point{s.gw * 1, s.gh * 1},
+			Right: Point{s.gw, s.gh},
 		}
 		gl.PushMatrix()
 		{
