@@ -29,6 +29,5 @@ _testmain.go
 *.swp
 
 **/vendor
-**/*.png
 **/*.xcf
 gopher-game
