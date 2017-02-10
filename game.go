@@ -20,14 +20,14 @@ type Game struct {
 
 func NewGame(window *glfw.Window) *Game {
 	scene := NewScene(window)
-	return &Game{
+	g := &Game{
 		window: window,
 		scene:  scene,
-		gopher: NewGopher(window, scene),
 		arts:   NewArtefactory(window),
 		board:  NewScoreBoard(scene.GetArea()),
-		lives:  reserveLives,
 	}
+	g.init()
+	return g
 }
 
 func (g *Game) Update() {
@@ -35,9 +35,7 @@ func (g *Game) Update() {
 	g.checkLives()
 	if g.lives <= 0 {
 		if g.window.GetKey(glfw.KeySpace) == glfw.Press {
-			g.gopher = NewGopher(g.window, g.scene)
-			g.lives = reserveLives
-			g.score = 0
+			g.init()
 		} else {
 			return
 		}
@@ -53,6 +51,12 @@ func (g *Game) Update() {
 		g.gopher = NewGopher(g.window, g.scene)
 	}
 	g.score += enemies*enemyPoints + gifts*giftPoints
+}
+
+func (g *Game) init() {
+	g.gopher = NewGopher(g.window, g.scene)
+	g.lives = reserveLives
+	g.score = 0
 }
 
 func (g *Game) checkLives() {
