@@ -11,7 +11,7 @@ type NutGift struct {
 	width   float32
 }
 
-func NewNutGift(point Point) Gift {
+func NewNutGift(point Point) Entity {
 	texture, bounds := NewTexture("assets/nut.png")
 	h, w := bounds.Right.Y, bounds.Right.X
 	return &NutGift{
@@ -23,6 +23,9 @@ func NewNutGift(point Point) Gift {
 		height: bounds.Right.Y,
 		width:  bounds.Right.X,
 	}
+}
+
+func (e *NutGift) Update() {
 }
 
 func (e *NutGift) GetCoords() Rect {

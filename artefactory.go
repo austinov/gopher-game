@@ -19,19 +19,21 @@ var (
 
 type Artefactory struct {
 	window     *glfw.Window
-	enemies    []Player
-	gifts      []Gift
+	scene      Scene
+	enemies    []Entity
+	gifts      []Entity
 	lastGift   time.Time
 	delayGift  int
 	lastEnemy  time.Time
 	delayEnemy int
 }
 
-func NewArtefactory(window *glfw.Window) *Artefactory {
+func NewArtefactory(window *glfw.Window, scene Scene) *Artefactory {
 	return &Artefactory{
 		window:     window,
-		enemies:    make([]Player, 0),
-		gifts:      make([]Gift, 0),
+		scene:      scene,
+		enemies:    make([]Entity, 0),
+		gifts:      make([]Entity, 0),
 		lastGift:   time.Unix(0, 0),
 		delayGift:  maxDelayGiftSec,
 		lastEnemy:  time.Unix(0, 0),
@@ -39,13 +41,13 @@ func NewArtefactory(window *glfw.Window) *Artefactory {
 	}
 }
 
-func (a *Artefactory) Update(scene Scene, gopher Player) (caught bool, deadEnemies, collectedGifts int) {
+func (a *Artefactory) Update(gopher Entity) (caught bool, deadEnemies, collectedGifts int) {
 	caught = a.isGopherCaught(gopher)
 	if caught {
 		return true, deadEnemies, collectedGifts
 	}
-	deadEnemies = a.updateEnemies(scene)
-	collectedGifts = a.updateGifts(scene, gopher)
+	deadEnemies = a.updateEnemies()
+	collectedGifts = a.updateGifts(gopher)
 	return false, deadEnemies, collectedGifts
 }
 
@@ -67,12 +69,12 @@ func (a *Artefactory) Unload() {
 	}
 }
 
-func (a *Artefactory) updateEnemies(scene Scene) (deadEnemies int) {
+func (a *Artefactory) updateEnemies() (deadEnemies int) {
 	// TODO more intelligence
 	deleted := 0
 	for i := range a.enemies {
 		j := i - deleted
-		if v, _ := CheckBoundaries(a.enemies[j].GetCoords(), scene.GetBlackHole()); v {
+		if v, _ := CheckBoundaries(a.enemies[j].GetCoords(), a.scene.GetBlackHole()); v {
 			// enemy crossed the hole, delete it and create new one
 			a.enemies[j].Unload()
 			a.enemies = append(a.enemies[:j], a.enemies[j+1:]...)
@@ -85,16 +87,16 @@ func (a *Artefactory) updateEnemies(scene Scene) (deadEnemies int) {
 		if len(a.enemies) < rnd.Intn(maxEnemies) {
 			a.lastEnemy = time.Now()
 			a.delayEnemy = rnd.Intn(maxDelayEnemySec)
-			a.enemies = append(a.enemies, NewEnemy(rnd.Intn(2) == 0))
+			a.enemies = append(a.enemies, NewEnemy(a.window, a.scene, rnd.Intn(2) == 0))
 		}
 	}
 	for _, enemy := range a.enemies {
-		enemy.Update(a.window, scene)
+		enemy.Update()
 	}
 	return deadEnemies
 }
 
-func (a *Artefactory) updateGifts(scene Scene, gopher Player) (collectedGifts int) {
+func (a *Artefactory) updateGifts(gopher Entity) (collectedGifts int) {
 	deleted := 0
 	for i := range a.gifts {
 		j := i - deleted
@@ -121,14 +123,14 @@ func (a *Artefactory) updateGifts(scene Scene, gopher Player) (collectedGifts in
 			if len(a.gifts) >= needGift {
 				break
 			}
-			nextPoint := a.nextGiftPoint(scene, gopher)
+			nextPoint := a.nextGiftPoint(gopher)
 			a.gifts = append(a.gifts, NewNutGift(nextPoint))
 		}
 	}
 	return collectedGifts
 }
 
-func (a *Artefactory) isGopherCaught(gopher Player) bool {
+func (a *Artefactory) isGopherCaught(gopher Entity) bool {
 	caught := false
 	for _, enemy := range a.enemies {
 		// gopher was caught by enemy, delete it and create new one
@@ -141,15 +143,15 @@ func (a *Artefactory) isGopherCaught(gopher Player) bool {
 		for _, enemy := range a.enemies {
 			enemy.Unload()
 		}
-		a.enemies = make([]Player, 0)
+		a.enemies = make([]Entity, 0)
 	}
 	return caught
 }
 
-func (a *Artefactory) nextGiftPoint(scene Scene, gopher Player) Point {
-	area := scene.GetArea()
+func (a *Artefactory) nextGiftPoint(gopher Entity) Point {
+	area := a.scene.GetArea()
 	bounds := make([]Rect, 0)
-	for _, b := range scene.GetBoundaries() {
+	for _, b := range a.scene.GetBoundaries() {
 		if b.Left.Y < area.Right.Y {
 			bounds = append(bounds, b)
 		}

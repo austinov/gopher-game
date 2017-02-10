@@ -6,6 +6,8 @@ import (
 )
 
 type Enemy struct {
+	window  *glfw.Window
+	plan    Plan
 	texture uint32
 	coords  Rect
 	height  float32
@@ -15,10 +17,12 @@ type Enemy struct {
 	floor   Rect
 }
 
-func NewEnemy(r2l bool) Player {
+func NewEnemy(window *glfw.Window, plan Plan, r2l bool) Entity {
 	texture, bounds := NewTexture("assets/enemy.png")
 	h, w := bounds.Right.Y, bounds.Right.X
 	return &Enemy{
+		window:  window,
+		plan:    plan,
 		texture: texture,
 		coords: Rect{
 			Left:  Point{-w, 8},
@@ -30,9 +34,9 @@ func NewEnemy(r2l bool) Player {
 	}
 }
 
-func (e *Enemy) Update(window *glfw.Window, plan Plan) {
+func (e *Enemy) Update() {
 	checkBoundaries := func() (bool, Rect) {
-		return CheckBoundaries(e.coords, plan.GetBoundaries()...)
+		return CheckBoundaries(e.coords, e.plan.GetBoundaries()...)
 	}
 	if e.onFloor {
 		if (e.coords.Left.X < e.floor.Left.X && e.coords.Right.X < e.floor.Left.X) ||

@@ -6,6 +6,8 @@ import (
 )
 
 type Gopher struct {
+	window  *glfw.Window
+	plan    Plan
 	texture uint32
 	coords  Rect
 	height  float32
@@ -15,10 +17,12 @@ type Gopher struct {
 	floor   Rect
 }
 
-func NewGopher(window *glfw.Window, plan Plan) Player {
+func NewGopher(window *glfw.Window, plan Plan) Entity {
 	texture, bounds := NewTexture("assets/gopher.png")
 	h, w := bounds.Right.Y, bounds.Right.X
 	return &Gopher{
+		window:  window,
+		plan:    plan,
 		texture: texture,
 		height:  h,
 		width:   w,
@@ -29,16 +33,16 @@ func NewGopher(window *glfw.Window, plan Plan) Player {
 	}
 }
 
-func (g *Gopher) Update(window *glfw.Window, plan Plan) {
+func (g *Gopher) Update() {
 	isButtonPress := func(b glfw.Key) bool {
-		return window.GetKey(b) == glfw.Press
+		return g.window.GetKey(b) == glfw.Press
 	}
 	isLeft := isButtonPress(glfw.KeyLeft)
 	isRight := isButtonPress(glfw.KeyRight)
 	isTop := isButtonPress(glfw.KeyUp)
 
 	checkBoundaries := func() (bool, Rect) {
-		return CheckBoundaries(g.coords, plan.GetBoundaries()...)
+		return CheckBoundaries(g.coords, g.plan.GetBoundaries()...)
 	}
 	if isLeft {
 		g.coords.Left.X -= 0.1

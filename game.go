@@ -11,7 +11,7 @@ const (
 type Game struct {
 	window *glfw.Window
 	scene  Scene
-	gopher Player
+	gopher Entity
 	arts   *Artefactory
 	board  Board
 	score  int
@@ -23,7 +23,7 @@ func NewGame(window *glfw.Window) *Game {
 	g := &Game{
 		window: window,
 		scene:  scene,
-		arts:   NewArtefactory(window),
+		arts:   NewArtefactory(window, scene),
 		board:  NewScoreBoard(scene.GetArea()),
 	}
 	g.init()
@@ -40,8 +40,8 @@ func (g *Game) Update() {
 			return
 		}
 	}
-	g.gopher.Update(g.window, g.scene)
-	caught, enemies, gifts := g.arts.Update(g.scene, g.gopher)
+	g.gopher.Update()
+	caught, enemies, gifts := g.arts.Update(g.gopher)
 	if caught {
 		g.lives--
 		if g.lives <= 0 {

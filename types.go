@@ -1,18 +1,14 @@
 package main
 
-import (
-	"github.com/go-gl/glfw/v3.2/glfw"
-)
-
 type Plan interface {
 	GetArea() Rect
 	GetBlackHole() Rect
 	GetBoundaries() []Rect
 }
 
-type Player interface {
-	Update(window *glfw.Window, plan Plan)
+type Entity interface {
 	GetCoords() Rect
+	Update()
 	Render()
 	Unload()
 }
@@ -22,12 +18,6 @@ type Scene interface {
 	Render()
 	Unload()
 	Plan
-}
-
-type Gift interface {
-	GetCoords() Rect
-	Render()
-	Unload()
 }
 
 type Board interface {
