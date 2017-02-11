@@ -5,7 +5,7 @@ gopher-game is a simple game in a terminal.
 It is an attempt to play with Go bindings to OpenGL and to make a game for my little daughter.
 I was inspired by awesome game [zombies-on-ice](https://github.com/loov/zombies-on-ice).
 
-![gopher-game](screenshot.gif)
+![gopher-game](https://github.com/austinov/gopher-game/blob/assets/screenshot.gif)
 
 
 In the beginning, as usual, run:
