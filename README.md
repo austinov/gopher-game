@@ -17,6 +17,12 @@ In the beginning, as usual, run:
     $ ./gopher-game
 ```
 
+### Download
+
+Alfa version:
+
+* [Linux 64bit](https://github.com/austinov/gopher-game/blob/assets/gopher-game.linux-64bit.tar.gz)
+
 #### Prerequisites
 
 - [go-gl/gl](https://github.com/go-gl/gl)
