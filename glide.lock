@@ -1,5 +1,5 @@
 hash: 819661a90058dbba0416029bbdfffa09c3ef3af602d9d9ba29a1e3b9f8633d65
-updated: 2017-02-05T11:46:23.905040094+03:00
+updated: 2017-02-18T12:04:09.746470595+03:00
 imports:
 - name: github.com/go-gl/gl
   version: b303bcb3e83b7ef645a5104e1c2db7f8d9e8918a
@@ -12,5 +12,5 @@ imports:
 - name: github.com/paulmach/go.geo
   version: e8994de4ca767ad1e416ce5e185f83538f0661a8
 - name: github.com/paulmach/go.geojson
-  version: 16c6a8e9da10025ce1b0c4515298e5bb4289a8c4
+  version: 6228f9f0660a1820e47c84d5cab6b72c8473023c
 testImports: []

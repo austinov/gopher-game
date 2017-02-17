@@ -1,6 +1,8 @@
 package main
 
 import (
+	"math"
+
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
@@ -33,6 +35,18 @@ func NewGopher(window *glfw.Window, plan Plan) Entity {
 	}
 }
 
+const (
+	delta      float32 = 0.001
+	toUpDy     float32 = 1.02
+	toBottomDy float32 = 0.08
+	maxDy      float32 = 1.04
+)
+
+var (
+	toUp bool
+	dy   float32
+)
+
 func (g *Gopher) Update() {
 	isButtonPress := func(b glfw.Key) bool {
 		return g.window.GetKey(b) == glfw.Press
@@ -47,7 +61,7 @@ func (g *Gopher) Update() {
 	if isLeft {
 		g.coords.Left.X -= 0.1
 		if in, bound := checkBoundaries(); in {
-			g.coords.Left.X = bound.Right.X + 0.001
+			g.coords.Left.X = bound.Right.X + delta
 		}
 		g.coords.Right.X = g.coords.Left.X + 2*g.width
 		g.r2l = true
@@ -55,7 +69,7 @@ func (g *Gopher) Update() {
 	if isRight {
 		g.coords.Right.X += 0.1
 		if in, bound := checkBoundaries(); in {
-			g.coords.Right.X = bound.Left.X - 0.001
+			g.coords.Right.X = bound.Left.X - delta
 		}
 		g.coords.Left.X = g.coords.Right.X - 2*g.width
 		g.r2l = false
@@ -68,17 +82,38 @@ func (g *Gopher) Update() {
 		}
 	}
 	if isTop && g.onFloor {
-		g.coords.Left.Y += 6.6
+		dy = toUpDy
+		sinY := float32(math.Sin(float64(dy)))
+		g.coords.Left.Y += (1.5*sinY - sinY)
 		if in, bound := checkBoundaries(); in {
-			g.coords.Left.Y = bound.Right.Y - 0.001
+			g.coords.Left.Y = bound.Right.Y - delta
 		}
 		g.coords.Right.Y = g.coords.Left.Y - 2*g.height
 		g.onFloor = false
+		toUp = true
 	}
-	if !g.onFloor {
-		g.coords.Right.Y -= 0.05
+	if toUp {
+		dy += delta
+		if dy < maxDy {
+			sinY := float32(math.Sin(float64(dy)))
+			g.coords.Left.Y += (1.5*sinY - sinY)
+			if in, bound := checkBoundaries(); in {
+				g.coords.Left.Y = bound.Right.Y - delta
+				toUp = false
+				dy = toBottomDy
+			}
+			g.coords.Right.Y = g.coords.Left.Y - 2*g.height
+		} else {
+			toUp = false
+			dy = toBottomDy
+		}
+	}
+	if !g.onFloor && !toUp {
+		dy += delta
+		sinY := float32(math.Sin(float64(dy)))
+		g.coords.Right.Y -= sinY
 		if in, bound := checkBoundaries(); in {
-			g.coords.Right.Y = bound.Left.Y + 0.001
+			g.coords.Right.Y = bound.Left.Y + delta
 			g.onFloor = true
 			g.floor = bound
 		}
